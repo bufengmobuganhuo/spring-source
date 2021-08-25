@@ -1,0 +1,36 @@
+@startuml
+TransactionAspectSupport -> APTM.getTransaction: getTransaction(),事务创建由事务管理器完成，\n同时返回TransactionStatus来记录当前事务的状
+note left
+在《事务处理拦截器的设计与实现》小节中，
+TransactionInterceptor拦截器的invoke回调中
+会使用createTransactionIfNecessary()来创建事务
+end note
+APTM.getTransaction -> APTM.doGetTransaction:抽象函数，\nTransaction对象的取得由具体的事务处理器实现,\n如DataSourceTransactionManager,\n这里使用了模板方法
+APTM.doGetTransaction -> APTM.getTransaction: 返回Transaction对象
+APTM.getTransaction -> APTM.getTransaction: 如果没有设置事务属性，\n那么使用默认的DefaultTransactionDefinition
+note left
+这个DefaultTransactionDefinition的默认事务处理属性是：
+    propagationBehavior=PROPAGATION_REQUIRED
+    isolationLevel=ISOLATION_DEFAULT
+    timeout=TIMEOUT_DEFAULT
+    readOnly=false
+end note
+APTM.getTransaction -> APTM.isExistingTransaction: 抽象函数，由具体的事务处理器实现,\n检查当前线程是否已经存在事务
+APTM.getTransaction -> APTM.handleExistingTransaction: 如果存在则根据在事务属性中定义的事务传播属性配置来处理事务的产生
+APTM.handleExistingTransaction -> APTM.handleExistingTransaction: 就是根据配置的不\n事务传播行为来执行不同的功能
+APTM.getTransaction -> APTM.getTransaction: 检查事务属性中timeout的设置是否合理
+note left
+如下全是事务不存在的情况
+end note
+APTM.getTransaction -> APTM.getTransaction: PROPAGATION_MANDATORY类型的事务，\n必须要有事务存在,否则抛异常
+APTM.getTransaction -> APTM.getTransaction: 如果当前没有事务存在，\n这时需要根据事务属性设置来创建事务
+APTM.getTransaction -> APTM.doBegin: 抽象函数，由具体的事务处理器实现,开启事务
+APTM.getTransaction -> TransactionAspectSupport: 返回TransactionStatus
+TransactionAspectSupport -> TransactionAspectSupport: TransactionStatus是TransactionInfo的一个属性，\n然后将TransactionInfo保存在ThreadLocal中
+note left
+绑定到当前线程后，
+当前线程可以通过ThreadLocal取得TransactionInfo
+以及与这个事务对应的TransactionStatus，从而
+把事务处理信息与调用事务方法的当前线程绑定起来
+end note
+@enduml

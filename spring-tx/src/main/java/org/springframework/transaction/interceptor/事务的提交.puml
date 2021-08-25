@@ -1,0 +1,4 @@
+@startuml
+TransactionInterceptor -> APTM.commit: 从TransactoinInfo中拿到事务处理器，\n然后调用该处理器的commit()方法,\nAbstractPlatformTransactionManager\n提供了一个提交事务的模板
+APTM.commit -> APTM.processCommit: 提交前
+@enduml

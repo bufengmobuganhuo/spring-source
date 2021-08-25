@@ -1,0 +1,4 @@
+@startuml
+DataSourceTransactionManager -> TransactionSynchronizationManager:获取与当前线程绑定的数据库Connection，\n这个Connection在第一个事务开始的地方与线程绑定
+
+@enduml

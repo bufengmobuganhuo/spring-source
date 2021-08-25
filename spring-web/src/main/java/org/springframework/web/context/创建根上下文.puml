@@ -1,0 +1,4 @@
+@startuml
+ContextLoader -> ContextLoader: 判断使用什么样的泪在WEB容器中作为IOC容器，\n如果没有特殊配置，使用XmlWebApplicationContext
+ContextLoader -> ContextLoader: 直接实例化需要产生的IOC容器，\n并设置IOC容器的各个参数（如双亲上下文，对ServletContext的引用等）,然后调用refresh()，重起整个IOc容器
+@enduml

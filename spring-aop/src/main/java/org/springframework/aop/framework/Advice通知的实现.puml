@@ -1,0 +1,6 @@
+@startuml
+JdkDynamicAopProxy -> ReflectiveMethodInvocation: JdkDynamicAopProxy的invoke()方法调用proceed()
+ReflectiveMethodInvocation -> MethodBeforeAdviceInterceptor:在proceed()方法中调用了这个拦截器的invoke()方法中调用了这个拦截器的invoke
+MethodBeforeAdviceInterceptor -> MethodBeforeAdvice:首先调用通知器的方法
+MethodBeforeAdviceInterceptor -> ReflectiveMethodInvocation: 递归调用proceed()方法
+@enduml

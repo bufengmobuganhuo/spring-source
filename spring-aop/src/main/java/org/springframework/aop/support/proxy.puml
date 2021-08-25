@@ -1,0 +1,6 @@
+@startuml
+client -> proxy: request()
+proxy -> proxy: preOperation()
+proxy -> realSubject: request()
+proxy -> proxy: postOperation()
+@enduml

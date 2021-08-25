@@ -63,7 +63,7 @@ import org.springframework.util.ObjectUtils;
  * ones are expanded in an interceptor list where an "xxx*" entry is included in the
  * list, matching the given prefix with the bean names (e.g. "global*" would match
  * both "globalBean1" and "globalBean2", "*" all defined interceptors). The matching
- * interceptors get applied according to their returned order value, if they implement
+ * interceptors get applied according to their returned order value, if they imp;=lement
  * the {@link org.springframework.core.Ordered} interface.
  *
  * <p>Creates a JDK proxy when proxy interfaces are given, and a CGLIB proxy for the
@@ -92,7 +92,7 @@ import org.springframework.util.ObjectUtils;
 public class ProxyFactoryBean extends ProxyCreatorSupport
 		implements FactoryBean<Object>, BeanClassLoaderAware, BeanFactoryAware {
 
-	/**
+	/**ƒ
 	 * This suffix in a value in an interceptor list indicates to expand globals.
 	 */
 	public static final String GLOBAL_SUFFIX = "*";
@@ -247,7 +247,9 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 	@Override
 	@Nullable
 	public Object getObject() throws BeansException {
+		//初始化通知器链
 		initializeAdvisorChain();
+		//根据不同的生命周期生成对应的代理对象
 		if (isSingleton()) {
 			return getSingletonInstance();
 		}
@@ -316,7 +318,7 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 		if (this.singletonInstance == null) {
 			this.targetSource = freshTargetSource();
 			if (this.autodetectInterfaces && getProxiedInterfaces().length == 0 && !isProxyTargetClass()) {
-				// Rely on AOP infrastructure to tell us what interfaces to proxy.
+				//根据AOP框架判断需要代理的接口
 				Class<?> targetClass = getTargetClass();
 				if (targetClass == null) {
 					throw new FactoryBeanNotInitializedException("Cannot determine target class for proxy");
@@ -421,6 +423,7 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 	 * are unaffected by such changes.
 	 */
 	private synchronized void initializeAdvisorChain() throws AopConfigException, BeansException {
+		//如果已经初始化，则不再初始化
 		if (this.advisorChainInitialized) {
 			return;
 		}

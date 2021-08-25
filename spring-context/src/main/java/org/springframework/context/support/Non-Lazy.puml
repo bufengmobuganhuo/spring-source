@@ -1,0 +1,4 @@
+@startuml
+AbstractApplicationContext -> AbstractApplicationContext.finishBeanFactoryInitialization: 在refresh()方法中，\n完成BeanDefinition的定位，解析，注册后，\n调用finishBeanFactoryInitialization方法处理lazy-init属性的Bean
+AbstractApplicationContext.finishBeanFactoryInitialization -> AbstractApplicationContext.finishBeanFactoryInitialization: 在这个方法中，实际上调用了getBean()触发了Bean依赖注入
+@enduml

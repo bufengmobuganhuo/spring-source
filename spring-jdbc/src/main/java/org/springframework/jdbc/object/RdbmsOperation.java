@@ -287,9 +287,11 @@ public abstract class RdbmsOperation implements InitializingBean {
 	 * and hence cannot be configured further
 	 */
 	public void declareParameter(SqlParameter param) throws InvalidDataAccessApiUsageException {
+		// 声明参数只能在compile之前
 		if (isCompiled()) {
 			throw new InvalidDataAccessApiUsageException("Cannot add parameters once the query is compiled");
 		}
+		// 把参数加入到一个LinkedList<SqlParameter>中
 		this.declaredParameters.add(param);
 	}
 

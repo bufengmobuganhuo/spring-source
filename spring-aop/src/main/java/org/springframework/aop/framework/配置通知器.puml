@@ -1,0 +1,18 @@
+@startuml
+AdvisedSupport -> DefaultAdvisorChainFactory:getInterceptorsAndDynamicInterceptionAdvice()
+note left
+在JdkDynamicAopProxy和CglibAopProxy中，
+都有调用AdvisedSupport.getInterceptorsAndDynamicInterceptionAdvice
+获取通知器链的过程。在上述ProxyFactoryBean的getObject()方法中，
+第一步就是初始化通知器链，它通过调用IOC容器的getBean()方法获取通知器链，
+又因为：ProxyFactoryBean -extends-> ProxyCreatorSupport -extends->AdvisedSupport
+最终通知器链由AdvisedSupport持有（有一个addAdvisor(Advisor)方法）
+end note
+DefaultAdvisorChainFactory -> GlobalAdvisorAdapterRegistry:getInstance(),标准的饿汉式单例模式，\n获取到一个DefaultAdvisorAdapterRegistry
+DefaultAdvisorChainFactory ->MethodMatcher: 调用matches(matches)，\n判断当前通知器是否和定义的切点匹配，
+DefaultAdvisorChainFactory ->DefaultAdvisorAdapterRegistry: 如果匹配，调用getInterceptors(advisor)，\n对获取到的通知器进行适配（适配器模式），变成一个拦截器
+DefaultAdvisorAdapterRegistry -> DefaultAdvisorAdapterRegistry: 如果advice是MethodInterceptor类型的通知，\n直接加入interceptors的list中，不需要适配
+DefaultAdvisorAdapterRegistry -> DefaultAdvisorAdapterRegistry: 否则对通知进行适配，使用已经配置好的Adapter：\nMethodBeforeAdviceAdapter,AfterReturningAdviceAdapter\nThrowsAdviceAdapter,\n然后从对应的adapter中取出封装好AOP编制功能的拦截器
+DefaultAdvisorAdapterRegistry ->DefaultAdvisorChainFactory: 适配好的拦截器放入List中
+DefaultAdvisorChainFactory ->AdvisedSupport: 创建好的拦截器链由AdvisedSupport持有
+@enduml

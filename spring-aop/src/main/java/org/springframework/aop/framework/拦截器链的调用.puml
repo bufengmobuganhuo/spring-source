@@ -1,0 +1,9 @@
+@startuml
+
+ReflectiveMethodInvocation -> ReflectiveMethodInvocation.proceed: 在proceed()方法中完成拦截器的调用
+ReflectiveMethodInvocation.proceed -> AopUtils: 从索引为-1的拦截器开始调用，并按需递增,\n如果拦截器链中的拦截器迭代调用完毕，\n调用invokeJoinpointUsingReflection()来调用target的函数，\n通过反射完成
+ReflectiveMethodInvocation.proceed -> ReflectiveMethodInvocation.proceed:沿着定义好的interceptorOrInterceptionAdvice链进行处理
+ReflectiveMethodInvocation.proceed -> InterceptorAndDynamicMethodMatcher.methodMatcher.matches:对拦截器进行动态匹配的判断，如果和定义的Pointcut匹配，则advice会被执行
+ReflectiveMethodInvocation.proceed -> ReflectiveMethodInvocation.proceed:如果不匹配，则递归调用proceed()
+
+@enduml

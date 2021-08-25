@@ -1,0 +1,22 @@
+@startuml
+AbstractSingleProxyFactoryBean -> AbstractSingleProxyFactoryBean: 校验target不可为空，器是一个引用类型
+note left
+AbstractSingleProxyFactoryBean实现了initializeBean接口，
+在IOC容器完成Bean的依赖注入时，会调用一个afterPropertiesSet()
+在这个方法中，触发了TransactionProxyFactoryBean对事务拦截器
+的配置
+end note
+AbstractSingleProxyFactoryBean -> ProxyFactory: 创建一个ProxyFactory对象，负责完成AOP的基本功能
+AbstractSingleProxyFactoryBean -> ProxyFactory: addAdvisor(),加入拦截器链中配置的preInterceptors
+AbstractSingleProxyFactoryBean -> TransactionProxyFactoryBean: 调用createMainInterceptor()，获取事务拦截器
+TransactionProxyFactoryBean -> TransactionAspectSupport: 调用afterPropertiesSet(),\n校验所需要的PlatformTransactionManager\n和TransactionAttribute存在
+note top
+TransactionAspectSupport持有了一个PlatfromTransactionManager，
+即一个具体的事务管理器（DataSourceTransactionManager等）
+end note
+TransactionProxyFactoryBean -> TransactionProxyFactoryBean: 若配置的切点不为空，则使用默认的通知器：DefaultPointcutAdvisor\n如果为空，则使用TransactionAttributeSourceAdvisor作为通知器
+TransactionProxyFactoryBean -> AbstractSingleProxyFactoryBean: 返回设置好的通知器
+AbstractSingleProxyFactoryBean -> AbstractSingleProxyFactoryBean: 创建目标对象，封装为一个TargetSource
+AbstractSingleProxyFactoryBean -> ProxyFactory: 调用getProxy()，生成代理对象，具体过程在AOP的实现中有涉及
+ProxyFactory -> AbstractSingleProxyFactoryBean: 获取到为事务处理而涉及的代理对象
+@enduml

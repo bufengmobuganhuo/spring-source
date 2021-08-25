@@ -1,0 +1,23 @@
+@startuml
+JdkDynamicAopProxy.invoke -> JdkDynamicAopProxy.invoke
+note left
+在JDK的动态代理中，
+JdkDynamicAopProxy实现了InvocationHandler接口
+当Proxy对象的代理方法被调用时，
+JdkDynamicAopProxy的invoke方法作为Proxy对象的回调函数被触发，
+从而通过invoke的具体实现，来完成对目标对象方法调用的拦截
+end note
+JdkDynamicAopProxy.invoke -> AdviceSupport.targetSource:获取目标对象
+JdkDynamicAopProxy.invoke -> AdviceSupport:获取定义好的拦截器链，\ngetInterceptorsAndDynamicInterceptionAdvice()
+AdviceSupport -> JdkDynamicAopProxy.invoke:返回拦截器链
+JdkDynamicAopProxy.invoke -> JdkDynamicAopProxy.invoke:如果没有配置拦截器，\n则直接通过反射执行目标方法
+JdkDynamicAopProxy.invoke -> ReflectiveMethodInvocation:如果配置了拦截器链，则生成一个ReflectiveMethodInvocation
+JdkDynamicAopProxy.invoke -> ReflectiveMethodInvocation:调用proceed()方法
+
+ReflectiveMethodInvocation -> AopUtils: 从索引为-1的拦截器开始调用，并按需递增,\n如果拦截器链中的拦截器迭代调用完毕，\n通过invokeJoinpointUsingReflection()利用反射\n调用target的方法
+ReflectiveMethodInvocation -> ReflectiveMethodInvocation:沿着定义好的interceptorOrInterceptionAdvice链\n逐个调用处理\n(ReflectiveMethodInvocation持有一个\ninterceptorOrInterceptionAdvice的List，使用索引来获取)
+ReflectiveMethodInvocation -> interceptorOrInterceptionAdvice:调用其内部的.methodMatcher.matches(),\n对拦截器进行动态匹配的判断，如果和定义的Pointcut匹配，则advice会被执行
+ReflectiveMethodInvocation -> ReflectiveMethodInvocation:如果不匹配，则递归调用proceed()
+
+
+@enduml

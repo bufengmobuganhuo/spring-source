@@ -1,0 +1,15 @@
+@startuml
+DispatcherServlet -> DispatcherServlet: 对http请求参数进行快照处理，\n为request添加WebApplicationContext对象等
+DispatcherServlet -> DispatcherServlet.doDispatcher:实际进行请求的分发
+DispatcherServlet.doDispatcher -> DispatcherServlet.getHandler:获取到对应的handler
+DispatcherServlet.getHandler -> HandlerMapping:DispatcherServlet持有了一个List<HandlerMapping>,\n根据request获取到HandlerMapping,\n调用HandlerMapping.getHandler获取到对应的handler
+HandlerMapping -> DispatcherServlet.getHandler: handler(HandlerExecutionChain)
+DispatcherServlet.getHandler -> DispatcherServlet.doDispatcher:handler(HandlerExecutionChain)
+DispatcherServlet.doDispatcher -> DispatcherServlet.getHandlerAdapter: 对handler进行校验，：是否按照Spring规范编写handler
+DispatcherServlet.getHandlerAdapter -> DispatcherServlet.doDispatcher: 返回一个HandlerAdapter
+DispatcherServlet.doDispatcher -> HandlerExecutionChain: 调用preHandle的拦截器,applyPreHandle()
+DispatcherServlet.doDispatcher -> HandlerAdapter: 调用controller的handleRequest(),处理请求
+DispatcherServlet.doDispatcher -> HandlerExecutionChain: 调用postHandle的拦截器,applyPostHandle()
+DispatcherServlet.doDispatcher -> DispatcherServlet.processDispatchResult: 处理请求
+
+@enduml

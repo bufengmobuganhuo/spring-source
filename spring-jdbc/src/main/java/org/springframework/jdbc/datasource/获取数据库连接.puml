@@ -1,0 +1,20 @@
+@startuml
+DataSourceUtils.getConnection -> DataSourceUtils.doGetConnection:
+note left of TransactionSynchronizationManager
+把对数据库的connection放到事务管理中进行管理，
+这里使用在TransactionSynchronizationManager中
+定义的ThreadLocal来和线程绑定数据库连接
+end note
+DataSourceUtils.doGetConnection -> TransactionSynchronizationManager: 获取一个ConnectionHolder,getResource(dataSource)
+TransactionSynchronizationManager -> DataSourceUtils.doGetConnection:ConnectionHolder
+DataSourceUtils.doGetConnection -> ConnectionHolder:如果在TransactionSynchronizationManager中已经有了与当前线程绑定的数据库连接，则直接使用
+DataSourceUtils.doGetConnection -> DataSourceUtils.fetchConnection:如果没有绑定，则使用DataSource获取连接
+DataSourceUtils.fetchConnection -> DataSourceUtils.doGetConnection:Connection
+note left of TransactionSynchronizationManager
+在绑定时，同时使用了TransactionSynchronizationManager
+和ConnectionHolder
+end note
+DataSourceUtils.doGetConnection -> ConnectionHolder:将获取的数据库连接通过TransactionSynchronizationManager与当前线程绑定起来，setConnection()等
+
+
+@enduml

@@ -1,0 +1,7 @@
+@startuml
+AbstractPlatformTransactionManager -> AbstractPlatformTransactionManager: 将挂起事务的处理交给具体事务处理器实现，如果该处理器不支持，则抛出异常
+note left
+suspend()方法的执行过程
+end note
+AbstractPlatformTransactionManager -> AbstractPlatformTransactionManager: 在线程中保存与事务处理有关的信息，并重置线程中相关的ThreadLocal变量
+@enduml

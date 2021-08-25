@@ -222,11 +222,14 @@ public abstract class SqlQuery<T> extends SqlOperation {
 	 */
 	public List<T> executeByNamedParam(Map<String, ?> paramMap, @Nullable Map<?, ?> context) throws DataAccessException {
 		validateNamedParameters(paramMap);
+		// 得到需要执行SQL语句
 		ParsedSql parsedSql = getParsedSql();
 		MapSqlParameterSource paramSource = new MapSqlParameterSource(paramMap);
+		// 配置好SQL语句需要的Parameters及rowMapper，这个rowMapper完成数据记录到对象的转换
 		String sqlToUse = NamedParameterUtils.substituteNamedParameters(parsedSql, paramSource);
 		Object[] params = NamedParameterUtils.buildValueArray(parsedSql, paramSource, getDeclaredParameters());
 		RowMapper<T> rowMapper = newRowMapper(params, context);
+		// 调用JdbcTemplate.query执行SQL
  		return getJdbcTemplate().query(newPreparedStatementCreator(sqlToUse, params), rowMapper);
 	}
 

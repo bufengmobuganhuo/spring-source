@@ -1,0 +1,5 @@
+@startuml
+AbstractUrlHandlerMapping -> AbstractUrlHandlerMapping: 从请求中获取到url
+note left:调用getHandlerInternal()
+AbstractUrlHandlerMapping -> AbstractUrlHandlerMapping: 将得到的url与handler进行匹配，得到对应的handler(HandlerExecutionChain)\n如果没有对应的handler，则使用默认handler处理
+@enduml

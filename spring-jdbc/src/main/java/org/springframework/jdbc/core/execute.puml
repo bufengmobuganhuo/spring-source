@@ -1,0 +1,9 @@
+@startuml
+JDBCTemplate.execute1 -> JDBCTemplate.execute1: 构建一个实现了StatementCallback,SqlProvider的内部类
+JDBCTemplate.execute1 -> JDBCTemplate.execute2: 使用上述类执行SQL语句
+JDBCTemplate.execute2 -> DataSourceUtils: 获取数据库连接，\n这个Connect已经在Spring的事务管理之下
+JDBCTemplate.execute2 -> JDBCTemplate.execute2: 创建操作数据库需要的Statement
+JDBCTemplate.execute2 -> StatementCallback: 调用上述创建的内部类，操作数据库(如果发生异常，则释放链接，抛出一个统一的异常)
+StatementCallback -> JDBCTemplate.execute2: 返回结果
+JDBCTemplate.execute2 -> JDBCTemplate.execute2: 关闭连接
+@enduml

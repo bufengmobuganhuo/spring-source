@@ -1,0 +1,15 @@
+@startuml
+FileSystemXmlApplicationContext -> AbstractApplicationContext: 子类调用父类refresh()
+AbstractApplicationContext --> AbstractRefreshableApplicationContext: 调用refreshBeanFactory()，\n完成资源的定位,载入
+AbstractRefreshableApplicationContext --> AbstractXmlApplicationContext: refreshBeanFactory()是一个模板方法，\n其首先创建了IOC容器，\n并启动对BeanDefinition的载入：\nloadBeanDefinitions(DefaultListableBeanFactory)
+AbstractXmlApplicationContext --> XmlBeanDefinitionReader:在loadBeanDefinitions(DefaultListableBeanFactory)中\n调用loadBeanDefinitions(beanDefinitionReader),\n在这个方法中支持以Resource/String的方式获取配置文件的资源位置，\n然后调用XmlBeanDefinitionReader.loadBeanDefinitions(资源位置)
+XmlBeanDefinitionReader --> XmlBeanDefinitionReader:如果资源位置是Resource，\n则使用XmlBeanDefinitionReader的loadBeanDefinitions(Resource),就是获取到XML文件，\n使用IO进行读取，调用\ndoLoadBeanDefinitions(InputSource inputSource, Resource resource)方法来载入
+XmlBeanDefinitionReader --> XmlBeanDefinitionReader:doLoadBeanDefinitions(InputSource inputSource, Resource resource)方法\n调用 registerBeanDefinitions(Document doc, Resource resource)来解析配置文件\n的各种元素
+XmlBeanDefinitionReader --> BeanDefinitionDocumentReader: 调用registerBeanDefinitions(doc, createReaderContext(resource))来解析配置文件\n的各种元素
+BeanDefinitionDocumentReader --> BeanDefinitionDocumentReader: 调用doRegisterBeanDefinitions(Element root)
+BeanDefinitionDocumentReader --> BeanDefinitionParserDelegate: 调用BeanDefinitionParserDelegate的\nparseBeanDefinitionElement(Element, BeanDefinition)\n解析成BeanDefinition类
+BeanDefinitionDocumentReader --> BeanDefinitionDocumentReader: 解析完后，调用\nprocessBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate)\n进行注册
+BeanDefinitionDocumentReader --> DefaultListableBeanFactory:processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate)\n最终调用registerBeanDefinition(beanName,beanDefinition)\n进行注册，实际注册过程是：\n以beanName为key,beanDefinition为value装入beanDefinitionMap（ConcurrentHashMap）
+XmlBeanDefinitionReader --> AbstractBeanDefinitionReader:如果资源位置是字符串，则使用XmlBeanDefinitionReader的父类的loadBeanDefinitions(String)解析成BeanDefinition类
+AbstractApplicationContext -> AbstractApplicationContext: BeanDefinition载入成功后，\n调用prepareBeanFactory，\n为容器配置ClassLoader、\nPropertyEditor和BeanPostProcessor等
+@enduml

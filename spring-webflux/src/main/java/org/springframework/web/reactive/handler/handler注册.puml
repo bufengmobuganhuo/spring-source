@@ -1,0 +1,4 @@
+@startuml
+SimpleUrlHandlerMapping -> SimpleUrlHandlerMapping: 对Bean的配置进行解析(此时url和controller的map已经建立好)
+SimpleUrlHandlerMapping -> AbstractUrlHandlerMapping: 调用基类的registerHandler()，最终成为一个LinkedMap<String,Object>
+@enduml

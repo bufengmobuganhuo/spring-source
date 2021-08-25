@@ -1,0 +1,10 @@
+@startuml
+HttpServletBean -> FrameworkServlet:initServletBean()
+FrameworkServlet -> FrameworkServlet: initWebApplicationContext()
+FrameworkServlet -> DispatcherServlet: initWebApplicationContext()中调用onRefresh()
+DispatcherServlet -> DispatcherServlet: 在onRefresh()中调用initStrategies()，\n对MVC模块的其他部分初始化，如HandlerMapping,ViewResolver等
+HttpServletBean -> FrameworkServlet: doGet()/doPost()
+FrameworkServlet -> FrameworkServlet: FrameworkServlet使用processRequest()对请求进行简单处理
+FrameworkServlet -> DispatcherServlet: 然后通过doService()方法调用DispatcherServlet的doDispatch()
+DispatcherServlet -> DispatcherServlet: doDispatch()
+@enduml

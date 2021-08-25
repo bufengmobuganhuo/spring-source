@@ -158,7 +158,9 @@ public class ReflectiveMethodInvocation implements ProxyMethodInvocation, Clonea
 	@Override
 	@Nullable
 	public Object proceed() throws Throwable {
-		// We start with an index of -1 and increment early.
+		// 从索引为-1的拦截器开始调用，并按需递增
+		// 如果拦截器链中的拦截器迭代调用完毕J，这里开始调用target的函数，这个函数是通过反射机制完成的
+		// 可以查看AopUtils.invokeJoinpointUsingReflection()
 		if (this.currentInterceptorIndex == this.interceptorsAndDynamicMethodMatchers.size() - 1) {
 			return invokeJoinpoint();
 		}

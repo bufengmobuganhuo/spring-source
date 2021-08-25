@@ -1,0 +1,17 @@
+@startuml
+CustomerMappingQuery -> MappingSqlQuery: 设置SQL
+note left
+new CustomerMappingQuery()
+end note
+CustomerMappingQuery -> RdbmsOperation: 调用declareParameter(),\n将参数设置到一个LinkedList<SqlParameter>中,\n设置参数只能在compile()之前，通过一个volatile标识位实现
+CustomerMappingQuery -> RdbmsOperation: 调用compile()
+RdbmsOperation -> SqlOperation: 调用compileInternal()，\n生成一个PreparedStatementCreatorFactory，\n负责生成声明参数的Statement
+CustomerMappingQuery -> SqlQuery: 实际调用executeByNamedParam()
+note left
+execute()
+end note
+SqlQuery -> SqlQuery: 得到需要执行SQL语句
+SqlQuery -> SqlQuery: 配置好SQL语句需要的Parameters及rowMapper，\n这个rowMapper完成数据记录到对象的转换
+SqlQuery -> JdbcTemplate: 调用JdbcTemplate.query执行SQL
+JdbcTemplate -> CustomerMappingQuery: 执行定义的回调mapRow(),得到对象
+@enduml

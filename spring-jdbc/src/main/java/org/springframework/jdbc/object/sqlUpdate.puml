@@ -1,0 +1,20 @@
+@startuml
+UpdateCreditRating -> SqlUpdate: setDateSource()
+note left
+准备工作
+end note
+SqlUpdate -> RdbmsOperation: setDataSource()
+RdbmsOperation -> JdbcTemplate: setDataSource()
+UpdateCreditRating -> RdbmsOperation: setSql()
+UpdateCreditRating -> RdbmsOperation: declareParameter()
+UpdateCreditRating -> RdbmsOperation: 调用compile()
+RdbmsOperation -> SqlOperation: compileInternal()
+UpdateCreditRating -> SqlUpdate: update()
+note left
+实际执行
+end note
+SqlUpdate -> JdbcTemplate: update()
+SqlUpdate -> SqlUpdate: checkRowsAffected(),
+SqlUpdate ->  UpdateCreditRating: 返回受影响行数
+
+@enduml

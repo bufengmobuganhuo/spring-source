@@ -1,0 +1,28 @@
+@startuml
+TransactionInterceptor -> AopUtils: 获取到目标对象
+note left
+在调用Proxy对象的代理方法时，
+会触发invoke()，其执行过程如下
+end note
+TransactionInterceptor -> TransactionAspectSupport: invokeWithinTransaction()
+TransactionAspectSupport -> TransactionAspectSupport: 获取到事务的属性配置，就是"读入事务属性配置"中使用的\ngetTransactionAttributeSource()\n如果为空，说明不是事务方法
+TransactionAspectSupport -> TransactionAspectSupport: 根据事务属性配置，获取具体的事务处理器
+TransactionAspectSupport -> TransactionInfo: 如果不是CallbackPreferringPlatformTransactionManager类型的\n首先创建事务createTransactionIfNecessary()
+note left
+区分不同类型的PlatformTransactionManager，因为他们的调用方法不同
+对于CallbackPreferringPlatformTransactionManager,需要回调函数实现事务的创建和提交
+但像DataSourceTransactionManager不是，不需要回调函数
+end note
+TransactionInfo -> TransactionAspectSupport: 返回TransactionInfo,\n事务创建过程中得到的信息方法TransactionInfo中，保存当前事务的状态
+TransactionAspectSupport -> TransactionAspectSupport: 沿着拦截器链一直执行
+TransactionAspectSupport -> TransactionAspectSupport: 如果执行过程中发生异常，则根据具体情况考虑回滚或提交
+TransactionAspectSupport -> PlatformTransactionManager: 使用事务处理器对事务进行提交
+TransactionAspectSupport -> TransactionInfo: 把与线程绑定的TransactionInfo设置为oldTransactionInfo
+TransactionAspectSupport -> TransactionInterceptor: 返回执行结果
+TransactionAspectSupport -> CallbackPreferringPlatformTransactionManager: 设置了一个回调函数，在回调函数中执行准备TransactionInfo,执行拦截器链，并最终更新TransactionInfo
+note left
+如果是CallbackPreferringPlatformTransactionManager，执行过程如下
+end note
+TransactionAspectSupport -> TransactionInterceptor: 返回执行结果
+
+@enduml

@@ -82,9 +82,14 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
 
 	@Override
 	public Mono<Object> getHandlerInternal(ServerWebExchange exchange) {
+		//从request中得到请求的url路径
 		PathContainer lookupPath = exchange.getRequest().getPath().pathWithinApplication();
 		Object handler;
 		try {
+			/**
+			 * 将得到的url路径和handler进行匹配，得到对应的handler，
+			 * 如果没有对应的handler，返回null，这样默认的handler会被调用
+			 */
 			handler = lookupHandler(lookupPath, exchange);
 		}
 		catch (Exception ex) {

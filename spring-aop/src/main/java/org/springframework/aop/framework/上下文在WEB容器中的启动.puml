@@ -1,0 +1,13 @@
+'@startuml
+ContextLoaderListener -> ContextLoader: initWebApplicationContext()
+note left
+ContextLoaderListener实现了ServletContextListener接口，
+这个接口是Servlet的API，它提供了与Servlet生命周期结合的回调，
+如contextInitialized()和contextDestroyed()方法。
+在此处，Servlet容器启动Web容器时调用contextInitialized()
+end note
+ContextLoader -> XmlWebApplicationContext: 返回WebApplicationContext的一个实现类，或者默认实现：XmlWebApplicationContext,createWebApplicationContext()
+XmlWebApplicationContext -> ContextLoader: 默认实现：XmlWebApplicationContext
+ContextLoader -> ContextLoader: 建立双亲IOC容器，ParentContext()
+ContextLoader -> ContextLoaderListener: WebApplicationContext
+@enduml

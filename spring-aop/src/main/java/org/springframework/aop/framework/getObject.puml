@@ -1,0 +1,13 @@
+@startuml
+ProxyFactoryBean -> ProxyFactoryBean: 初始化通知器链:initializeAdvisorChain()\n只初始化一次，通过调用IOC容器的getBean()方法来实现\n初始化完后将取得的通知器加入到通知器链中
+ProxyFactoryBean -> ProxyCreatorSupport: 根据配置的生命周期生成代理对象，\n具体获取负责生成代理对象的AopProxy对象：createAopProxy()
+ProxyCreatorSupport -> DefaultAopProxyFactory: 使用简单工厂方法获取AopProxy对象：createAopProxy
+DefaultAopProxyFactory -> ProxyCreatorSupport:如果targetClass实现了JDK动态代理的接口，使用JDK生成代理对象（返回JdkDynamicAopProxy类）\n否则使用CGLIB生成代理对象(返回Cglib2AopProxy)
+ProxyFactoryBean -> ProxyCreatorSupport: 调用getProxy()
+ProxyCreatorSupport -> JdkDynamicAopProxy: 调用具体的AopProxy的getProxy()方法（两种情况之情况一）
+JdkDynamicAopProxy -> ProxyCreatorSupport: 使用JDK中动态代理：Proxy.newProxyInstance()获取代理对象
+ProxyCreatorSupport -> CglibAopProxy: 调用具体的AopProxy的getProxy()方法（两种情况之情况二）
+CglibAopProxy -> ProxyCreatorSupport: CglibAopProxy通过设置callback回调来实现对targetClass的拦截
+ProxyCreatorSupport -> ProxyFactoryBean: 返回生成的对象
+
+@enduml

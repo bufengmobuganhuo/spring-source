@@ -1,0 +1,16 @@
+@startuml
+外部系统 -> TransactionAttributeSourcePointcut:在应用调用目标方法时，因为这个目标方法已经被\nTransactionProxyFactoryBean代理，所以\nTransactionProxyFactoryBean需要判断\n这个调用方法是否是事务方法。matches(method,targetClass)
+TransactionAttributeSourcePointcut -> TransactionAspectSupport:getTransactionAttributeSource()
+
+TransactionAspectSupport -> TransactionAttributeSourcePointcut: 实际上会返回一个NameMatchTransactionAttributeSource
+TransactionAttributeSourcePointcut -> NameMatchTransactionAttributeSource.getTransactionAttribute: getTransactionAttribute()
+note left
+对调用的方法进行判断，
+判断它是否是事务方法，如果是，
+则取出相应的事务配置属性
+end note
+NameMatchTransactionAttributeSource.getTransactionAttribute -> NameMatchTransactionAttributeSource.getTransactionAttribute: 使用调用的方法名从持有的map中获取TransactionAttribute
+NameMatchTransactionAttributeSource.getTransactionAttribute -> PatternMatchUtils: 如果获取不到，\n则使用方法名和map中的所有方法使用simpleMatch()进行匹配
+NameMatchTransactionAttributeSource.getTransactionAttribute -> TransactionAttributeSourcePointcut: 如果匹配，则返回事务配置属性TransactionAttribute
+TransactionAttributeSourcePointcut -> 外部系统: 事务配置属性不为空，则返回true
+@enduml
